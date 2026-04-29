@@ -1,0 +1,22 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-abstract",
+      "description": "Abstract futuristic space landscape",
+      "imageUrl": "https://picsum.photos/seed/astro1/1200/600",
+      "imageHint": "abstract space"
+    },
+    {
+      "id": "persona-male",
+      "description": "Modern business professional portrait",
+      "imageUrl": "https://picsum.photos/seed/persona1/200/200",
+      "imageHint": "man professional"
+    },
+    {
+      "id": "persona-female",
+      "description": "Tech entrepreneur portrait",
+      "imageUrl": "https://picsum.photos/seed/persona2/200/200",
+      "imageHint": "woman entrepreneur"
+    }
+  ]
+}
