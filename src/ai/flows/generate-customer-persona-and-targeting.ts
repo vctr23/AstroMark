@@ -7,8 +7,8 @@
  * - GenerateCustomerPersonaAndTargetingOutput - The return type for the function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const GenerateCustomerPersonaAndTargetingInputSchema = z.object({
   productName: z.string().describe('The name of the product or service.'),
@@ -53,8 +53,8 @@ export type GenerateCustomerPersonaAndTargetingOutput = z.infer<
 
 const prompt = ai.definePrompt({
   name: 'customerPersonaAndTargetingPrompt',
-  input: {schema: GenerateCustomerPersonaAndTargetingInputSchema},
-  output: {schema: GenerateCustomerPersonaAndTargetingOutputSchema},
+  input: { schema: GenerateCustomerPersonaAndTargetingInputSchema },
+  output: { schema: GenerateCustomerPersonaAndTargetingOutputSchema },
   model: 'googleai/gemini-2.5-flash',
   prompt: `You are an expert marketing strategist.
 Generate 2 customer personas, 3 target sectors, and 3 geographic locations.
@@ -77,20 +77,20 @@ const generateCustomerPersonaAndTargetingFlow = ai.defineFlow(
   async input => {
     let lastError: any;
     const maxRetries = 4;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       try {
-        const {output} = await prompt(input);
+        const { output } = await prompt(input);
         if (output) return output;
       } catch (error: any) {
         lastError = error;
         const errMsg = error.message?.toLowerCase() || "";
-        
+
         // Detect 503, high demand, or overloaded errors from Google AI
-        const isRetryable = 
-          errMsg.includes('503') || 
-          errMsg.includes('unavailable') || 
-          errMsg.includes('demand') || 
+        const isRetryable =
+          errMsg.includes('503') ||
+          errMsg.includes('unavailable') ||
+          errMsg.includes('demand') ||
           errMsg.includes('overloaded') ||
           errMsg.includes('deadline');
 
@@ -100,7 +100,8 @@ const generateCustomerPersonaAndTargetingFlow = ai.defineFlow(
           await new Promise(resolve => setTimeout(resolve, delay));
           continue;
         }
-        throw error;
+        console.error("DETALLE DEL ERROR DE GEMINI (Customer Persona):", error);
+        throw new Error(`Error en la conexión con Gemini (2.5-Flash) tras reintentos: ${error.message || error}`);
       }
     }
     throw lastError;

@@ -7,8 +7,8 @@
  * - GenerateMarketingIdeasAndSlogansOutput - The return type for the generateMarketingIdeasAndSlogans function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const GenerateMarketingIdeasAndSlogansInputSchema = z.object({
   productDescription: z
@@ -37,8 +37,8 @@ export type GenerateMarketingIdeasAndSlogansOutput = z.infer<
 
 const prompt = ai.definePrompt({
   name: 'generateMarketingIdeasAndSlogansPrompt',
-  input: {schema: GenerateMarketingIdeasAndSlogansInputSchema},
-  output: {schema: GenerateMarketingIdeasAndSlogansOutputSchema},
+  input: { schema: GenerateMarketingIdeasAndSlogansInputSchema },
+  output: { schema: GenerateMarketingIdeasAndSlogansOutputSchema },
   model: 'googleai/gemini-2.5-flash',
   prompt: `You are a highly creative marketing specialist for AstroMark, an advanced marketing application.
 Your goal is to generate innovative marketing campaign ideas and compelling slogans tailored to a specific product and target audience.
@@ -62,8 +62,13 @@ const generateMarketingIdeasAndSlogansFlow = ai.defineFlow(
     outputSchema: GenerateMarketingIdeasAndSlogansOutputSchema,
   },
   async (input) => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const { output } = await prompt(input);
+      return output!;
+    } catch (error: any) {
+      console.error("DETALLE DEL ERROR DE GEMINI (Ideas and Slogans):", error);
+      throw new Error(`Error en la conexión con Gemini (2.5-Flash): ${error.message || error}`);
+    }
   }
 );
 

@@ -7,8 +7,8 @@
  * - GenerateMarketingBannerConceptsOutput - The return type for the generateMarketingBannerConcepts function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const GenerateMarketingBannerConceptsInputSchema = z.object({
   businessName: z.string().describe('The name of the business.'),
@@ -45,8 +45,8 @@ export async function generateMarketingBannerConcepts(input: GenerateMarketingBa
 
 const prompt = ai.definePrompt({
   name: 'generateMarketingBannerConceptsPrompt',
-  input: {schema: GenerateMarketingBannerConceptsInputSchema},
-  output: {schema: GenerateMarketingBannerConceptsOutputSchema},
+  input: { schema: GenerateMarketingBannerConceptsInputSchema },
+  output: { schema: GenerateMarketingBannerConceptsOutputSchema },
   model: 'googleai/gemini-2.5-flash',
   prompt: `You are an expert marketing designer and strategist for a company named AstroMark. Your task is to generate creative and effective marketing banner concepts for a business.
 
@@ -73,7 +73,12 @@ const generateMarketingBannerConceptsFlow = ai.defineFlow(
     outputSchema: GenerateMarketingBannerConceptsOutputSchema,
   },
   async (input) => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const { output } = await prompt(input);
+      return output!;
+    } catch (error: any) {
+      console.error("DETALLE DEL ERROR DE GEMINI (Banner Concepts):", error);
+      throw new Error(`Error en la conexión con Gemini (2.5-Flash): ${error.message || error}`);
+    }
   }
 );

@@ -7,8 +7,8 @@
  * - AnalyzeMarketAndCompetitorsOutput - The return type for the analyzeMarketAndCompetitors function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const AnalyzeMarketAndCompetitorsInputSchema = z.object({
   identifier: z
@@ -67,8 +67,8 @@ export async function analyzeMarketAndCompetitors(
 
 const prompt = ai.definePrompt({
   name: 'analyzeMarketAndCompetitorsPrompt',
-  input: {schema: AnalyzeMarketAndCompetitorsInputSchema},
-  output: {schema: AnalyzeMarketAndCompetitorsOutputSchema},
+  input: { schema: AnalyzeMarketAndCompetitorsInputSchema },
+  output: { schema: AnalyzeMarketAndCompetitorsOutputSchema },
   model: 'googleai/gemini-2.5-flash',
   prompt: `You are an expert marketing analyst for AstroMark.
 
@@ -99,7 +99,12 @@ const analyzeMarketAndCompetitorsFlow = ai.defineFlow(
     outputSchema: AnalyzeMarketAndCompetitorsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const {output} = await prompt(input);
+      return output!;
+    } catch (error: any) {
+      console.error("DETALLE DEL ERROR DE GEMINI (Market Analysis):", error);
+      throw new Error(`Error en la conexión con Gemini (2.5-Flash): ${error.message || error}`);
+    }
   }
 );
